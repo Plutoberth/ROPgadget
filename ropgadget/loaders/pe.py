@@ -148,16 +148,18 @@ class PE(object):
 
         self.__sections_l = []
 
-        self.__getPEOffset()
+        self.__PEOffset = PE.__getPEOffset(self.__binary)
         self.__parsePEHeader()
         self.__parseOptHeader()
         self.__parseSections()
 
-    def __getPEOffset(self):
-        self.__PEOffset = unpack("<I", bytes(self.__binary[60:64]))[0]
-        if self.__binary[self.__PEOffset:self.__PEOffset + 4] != unhexlify(b"50450000"):
-            print("[Error] PE.__getPEOffset() - Bad PE signature")
-            return None
+    @staticmethod
+    def __getPEOffset(binary):
+        return unpack("<I", bytes(binary[60:64]))[0]
+
+    @staticmethod
+    def __isPESignatureValid(binary, offset):
+        return binary[offset:offset + 4] == unhexlify(b"50450000")
 
     def __parsePEHeader(self):
         PEheader = self.__binary[self.__PEOffset:]
@@ -242,4 +244,5 @@ class PE(object):
 
     @staticmethod
     def isMatch(binary):
-        return binary[:2] == unhexlify(b"4d5a")
+        mzSigValid = binary[:2] == unhexlify(b"4d5a")
+        return mzSigValid and PE.__isPESignatureValid(binary, PE.__getPEOffset(binary))
