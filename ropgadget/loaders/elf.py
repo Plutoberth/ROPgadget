@@ -10,6 +10,8 @@ from ctypes import *
 
 from capstone import *
 
+from binascii import unhexlify
+
 
 class ELFFlags(object):
     ELFCLASS32  = 0x01
@@ -360,3 +362,7 @@ class ELF(object):
 
     def getFormat(self):
         return "ELF"
+
+    @staticmethod
+    def isMatch(binary):
+        return binary[:4] == unhexlify(b"7f454c46")

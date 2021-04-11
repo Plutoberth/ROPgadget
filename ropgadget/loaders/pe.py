@@ -239,3 +239,7 @@ class PE(object):
 
     def getFormat(self):
         return "PE"
+
+    @staticmethod
+    def isMatch(binary):
+        return binary[:2] == unhexlify(b"4d5a")

@@ -107,6 +107,10 @@ class UNIVERSAL(object):
         for binary in self.__machoBinaries:
             return binary.getEndian()
 
+    @staticmethod
+    def isMatch(binary):
+        return binary[:4] == unhexlify(b"cafebabe")
+
 
 if sys.version_info.major == 3:
     xrange = range

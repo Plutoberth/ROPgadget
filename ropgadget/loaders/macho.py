@@ -10,6 +10,7 @@ from ctypes import *
 
 from capstone import *
 
+from binascii import unhexlify
 
 class MACH_HEADER(Structure):
     _fields_ = [
@@ -216,3 +217,7 @@ class MACHO(object):
 
     def getFormat(self):
         return "Mach-O"
+
+    @staticmethod
+    def isMatch(binary):
+        return binary[:4] == unhexlify(b"cefaedfe") or binary[:4] == unhexlify(b"cffaedfe")

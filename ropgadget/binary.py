@@ -36,17 +36,14 @@ class Binary(object):
                 options.rawMode,
                 options.rawEndian,
             )
-        elif self.__rawBinary[:4] == unhexlify(b"7f454c46"):
-            self.__binary = ELF(self.__rawBinary)
-        elif self.__rawBinary[:2] == unhexlify(b"4d5a"):
-            self.__binary = PE(self.__rawBinary)
-        elif self.__rawBinary[:4] == unhexlify(b"cafebabe"):
-            self.__binary = UNIVERSAL(self.__rawBinary)
-        elif self.__rawBinary[:4] == unhexlify(b"cefaedfe") or self.__rawBinary[:4] == unhexlify(b"cffaedfe"):
-            self.__binary = MACHO(self.__rawBinary)
         else:
-            print("[Error] Binary format not supported")
-            return None
+            for loader in [ELF, PE, UNIVERSAL, MACHO]:
+                if loader.isMatch(self.__rawBinary):
+                    self.__binary = loader(self.__rawBinary)
+                    break
+            else:
+                print("[Error] Binary format not supported")
+                return None
 
     def getFileName(self):
         return self.__fileName
